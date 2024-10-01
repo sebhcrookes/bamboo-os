@@ -22,19 +22,17 @@ void kmain(bamboo_boot_info_t* boot_info) {
 
     kernel::init(boot_info);
 
-    io::printf("The following notice and this permission notice shall be included in all\n");
-    io::printf("copies or substantial portions of BambooOS (the \"Software\").\n\n");
+    // io::printf("The following notice and this permission notice shall be included in all\n");
+    // io::printf("copies or substantial portions of BambooOS (the \"Software\").\n\n");
 
-    io::printf("THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,\n");
-    io::printf("INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A\n");
-    io::printf("PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT\n");
-    io::printf("HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF\n");
-    io::printf("CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE\n");
-    io::printf("OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.\n\n");
+    // io::printf("THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,\n");
+    // io::printf("INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A\n");
+    // io::printf("PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT\n");
+    // io::printf("HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF\n");
+    // io::printf("CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE\n");
+    // io::printf("OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.\n\n");
     
-    io::printf("Hello, world!\n");
-
-    int epic = 9 / 0;    
+    io::printf("> Hello, world!\n");
 
     while(1) {
         asm("hlt");

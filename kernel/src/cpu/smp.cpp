@@ -45,7 +45,7 @@ namespace smp {
 
         uint32_t bsp_id = local_apic::get_id();
 
-        // Send Init to all cpus except self
+        // Send init to all cpus except self
 
         for (uint8_t i = 0; i < cpus.size(); i++) {
             CPU* cpu = (CPU*) cpus[i];
