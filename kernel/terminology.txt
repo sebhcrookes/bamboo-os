@@ -1,0 +1,2 @@
+In the code, I use some abbreviations to shorten things, which you should familiarise yourself with:
+- UPN - usable page number, for example UPN 0 is the first usable page in the memory map, UPN 1 is the second etc.

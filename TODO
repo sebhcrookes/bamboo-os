@@ -1,0 +1,8 @@
+- Possibly turn kernel into a class - definitely replace kernel.cpp with entry.cpp and replace init.cpp with kernel.cpp
+- ACPI
+- Add / fix the printf function (with different options + correct int sizes)
+- Read about MPS table (which can be accessed in bootloader)
+- Read about MADT table in ACPI
+- Initialise APICs + IOAPIC
+- PCI
+- Rewrite posix-uefi as bamboo-uefi and remove un-needed casts from bootloader
