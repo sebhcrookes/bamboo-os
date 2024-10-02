@@ -30,7 +30,7 @@
 namespace pit {
     uint64_t time_since_boot = 0;
 
-    const uint64_t BaseFrequency = 1193182;
+    const uint64_t base_frequency = 1193182;
 
     uint16_t divisor = 65535;
 
@@ -46,9 +46,9 @@ namespace pit {
         }
     }
 
-    void set_divisor(uint16_t Divisor) {
-        if (Divisor < 100) Divisor = 100;
-        divisor = Divisor;
+    void set_divisor(uint16_t divisor) {
+        if (divisor < 100) divisor = 100;
+        divisor = divisor;
         io::io_write_8(0x43, CMD_BINARY | CMD_MODE3 | CMD_RW_BOTH | CMD_COUNTER0);
         io::io_write_8(0x40, (uint8_t)(divisor & 0x00ff));
         io::io_wait();

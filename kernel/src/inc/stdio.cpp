@@ -72,6 +72,16 @@ namespace io {
         __asm__ volatile("outb %b0, %w1" : : "a" (data), "Nd" (port));
     }
 
+    void io_write_32(uint32_t port, uint32_t data) {
+        asm volatile("outl %%eax, %%dx": : "a" (data), "Nd" (port));
+    }
+
+    uint32_t io_read_32(uint32_t port) {
+        uint32_t ret;
+        asm volatile("inl %%dx, %%eax" : "=a" (ret) : "Nd" (port));
+        return ret;
+    }
+
     void mmio_write_32(void *p, uint32_t data) {
         *(volatile uint32_t*)(p) = data;
     }

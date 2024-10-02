@@ -8,7 +8,6 @@
 #define DEFAULT_FLAGS VMMFlag::PRESENT | VMMFlag::READ_WRITE
 
 VMM::VMM() {
-    // Hi, Felix put this here :)
     this->m_pml4 = (page_table_t*) memory::get_allocator()->alloc_page();
     memset(m_pml4, 0, 0x1000);
 }
@@ -110,6 +109,7 @@ void pde_t::set_flag(VMMFlag flag, bool enabled) {
     }
 }
 
+// Hi, Felix put this here :)
 void pde_t::set_flags(uint64_t flags, bool enabled) {
     if(enabled) this->value |= flags;
     else this->value &= (~flags);

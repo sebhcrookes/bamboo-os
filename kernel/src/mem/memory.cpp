@@ -17,7 +17,6 @@ namespace memory {
 
         efi_memory_descriptor_t* ent = mmap->map;
         do {
-            // io::printf("%s : %X-%X\n", efi_mem_type_as_str(ent->type), ent->physical_start, ent->physical_start + ent->number_of_pages * 0x1000);
             ent = (efi_memory_descriptor_t*)(((uint8_t*) ent) + mmap->desc_size);
         } while((uint8_t*) ent < (uint8_t*) mmap->map + mmap->map_size);
 
@@ -64,7 +63,7 @@ namespace memory {
         io::clear_current_line();
 
         io::print_drv_name("VMM");
-        io::printf("Initialised VMM, higher-half kernel mapping complete\n");
+        io::printf("Initialised VMM, higher-half kernel mapping complete to 0x%X\n", KERNEL_START);
     }
 
     /* Initialises the kernel's heap */

@@ -37,9 +37,7 @@ namespace ioapic {
 
         // Get number of entries supported by the IO APIC
         uint32_t x = in(ioapic_addr, IOAPICVER);
-        uint32_t count = ((x >> 16) & 0xff) + 1;    // maximum redirection entry
-
-        io::printf("I/O APIC pins = %d\n", count);
+        uint32_t count = ((x >> 16) & 0xFF) + 1;
 
         // Disable all entries
         for (int i = 0; i < count; ++i) {

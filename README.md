@@ -1,6 +1,7 @@
 # BambooOS
 
-A hobby OS designed and built by Seb with features such as a bootloader, ACPI support, interrupts, multithreading, PMM+VMM, heap, PCI support and keyboard support (and AHCI + FAT32, not copied from different versions yet).
+A hobby OS designed and built by Sebastian Crookes with features such as a UEFI bootloader, a higher-half kernel, ACPI support, interrupts, multithreading, PMM + VMM, a heap, PCI support, VFS, FAT32 (and AHCI, not copied from different versions yet). I am currently working on cleaning up/rewriting parts, so this is definitely not the final product.
 
-Below is an image of the project without PCI or AHCI/FAT32 support.
-![Screenshot of BambooOS](https://github.com/sebhcrookes/bamboo-os/tree/main/screenshots/welcome-screen-noahci.png)
+Below is an image of the project so far. This screenshot does not show AHCI support. 
+
+![Screenshot of BambooOS](https://github.com/sebhcrookes/bamboo-os/tree/main/screenshots/os-screenshot.png)

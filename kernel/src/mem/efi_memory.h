@@ -4,13 +4,14 @@
 
 struct efi_memory_descriptor_t {
     uint32_t type;
-    uint32_t pad;
+    uint32_t padding;
     uint64_t physical_start;
     uint64_t virtual_start;
     uint64_t number_of_pages;
     uint64_t attribute;
 };
 
+/* These can be found in the EFI spec */
 enum EFI_MEM_TYPE {
     EfiReservedMemoryType,
     EfiLoaderCode,
@@ -26,13 +27,10 @@ enum EFI_MEM_TYPE {
     EfiMemoryMappedIO,
     EfiMemoryMappedIOPortSpace,
     EfiPalCode,
-    EfiPersistentMemory,
-    EfiMaxMemoryType
+    EfiPersistentMemory
 };
 
-const char* efi_mem_type_as_str(uint32_t type);
-
-/* Attributes for memory regions - these may be OR'd together */
+/* Flags for attributes for memory regions */
 
 #define EFI_MEMORY_UC               0x0000000000000001
 #define EFI_MEMORY_WC               0x0000000000000002

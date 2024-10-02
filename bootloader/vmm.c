@@ -6,86 +6,49 @@
 
 #include "memory.h"
 
-void virtual_to_indices(uint64_t virtual_address, uint64_t* PDP_i, uint64_t* PD_i, uint64_t* PT_i, uint64_t* P_i) {
-    // Hi, Felix put this here :)
-    *P_i    = (virtual_address >>= 12) & 0x1FF;
-    *PT_i   = (virtual_address >>= 9)  & 0x1FF;
-    *PD_i   = (virtual_address >>= 9)  & 0x1FF;
-    *PDP_i  = (virtual_address >>= 9)  & 0x1FF;
-}
+void map_memory(page_table_t* pml4, void* phys, void* virt) {    
+    /* Finding the indices from the virtual address */
+    uint64_t indices[4] = { 0, 0, 0, 0 }; // Holds indices in order: PDP, PD, PT, P
 
-void map_memory(page_table_t* pml4, void* phys, void* virt) {
-    uint64_t PDP_i;
-    uint64_t PD_i;
-    uint64_t PT_i;
-    uint64_t P_i;
+    uint64_t curr = (uint64_t) virt;
+    for(int i = 0; i < 4; i++) {
+        if(i == 0) curr >>= 12;
+        else curr >>= 9;
 
-    // Convert the virtual address into the indices we need
-    virtual_to_indices((uint64_t) virt, &PDP_i, &PD_i, &PT_i, &P_i);
-    
-    pde_t PDE;
-
-    PDE = pml4->entries[PDP_i];
-    
-    /* Getting the PDP (page directory pointer) */
-    page_table_t* PDP;
-    if (!get_flag(&PDE, PRESENT)) { // If the PDE is not present then we need to create a new one
-        efi_status_t status = BS->AllocatePages(AllocateAnyPages, EfiLoaderData, 1, (efi_physical_address_t*) &PDP);
-        memset(PDP, 0, 0x1000);
-
-        set_address(&PDE, (uint64_t) PDP >> 12); // Set the PDP's address to the address which we allocated
-
-        set_flag(&PDE, PRESENT, true);
-        set_flag(&PDE, READ_WRITE, true);
-
-        // Finally, set the entry in the PML4 to this new PDP
-        pml4->entries[PDP_i] = PDE;
-    } else {
-        PDP = (page_table_t*)((uint64_t) get_address(&PDE) << 12);
+        indices[3 - i] = curr & 0x1FF;
     }
     
-    PDE = PDP->entries[PD_i];
+    /* Traversing the tables, creating new ones if necessary */
+    pde_t PDE = pml4->entries[indices[0]];
 
-    /* Getting the PD (page directory) */
-    page_table_t* PD;
-    if (!get_flag(&PDE, PRESENT)) {
-        efi_status_t status = BS->AllocatePages(AllocateAnyPages, EfiLoaderData, 1, (efi_physical_address_t*) &PD);
-        memset(PD, 0, 0x1000);
+    page_table_t* last_table = pml4;
+    page_table_t* table;
+    for(int i = 0; i < 3; i++) {
+        if (!get_flag(&PDE, PRESENT)) { // If the table is not present then we need to create a new one
+            /* Allocate space for a table */
+            efi_status_t status = BS->AllocatePages(AllocateAnyPages, EfiLoaderData, 1, (efi_physical_address_t*) &table);
+            memset(table, 0, 0x1000);
 
-        set_address(&PDE, (uint64_t) PD >> 12);
+            // Setting the PDE's address and flags
+            set_address(&PDE, (uint64_t) table >> 12);
+            set_flag(&PDE, PRESENT, true);
+            set_flag(&PDE, READ_WRITE, true);
 
-        set_flag(&PDE, PRESENT, true);
-        set_flag(&PDE, READ_WRITE, true);
-        
-        PDP->entries[PD_i] = PDE;
-    } else {
-        PD = (page_table_t*)((uint64_t) get_address(&PDE) << 12);
+            // Finally, set the entry in the PML4 to this new PDP
+            last_table->entries[indices[i]] = PDE;
+        } else {
+            table = (page_table_t*)((uint64_t) get_address(&PDE) << 12);
+        }
+
+        PDE = table->entries[indices[i + 1]];
+
+        last_table = table;
     }
-
-    PDE = PD->entries[PT_i];
-
-    /* Getting the PT (page table) */
-    page_table_t* PT;
-    if (!get_flag(&PDE, PRESENT)) {
-        efi_status_t status = BS->AllocatePages(AllocateAnyPages, EfiLoaderData, 1, (efi_physical_address_t*) &PT);
-        memset(PT, 0, 0x1000);
-
-        set_address(&PDE, (uint64_t) PT >> 12);
-
-        set_flag(&PDE, PRESENT, true);
-        set_flag(&PDE, READ_WRITE, true);
-        
-        PD->entries[PT_i] = PDE;
-    } else {
-        PT = (page_table_t*)((uint64_t) get_address(&PDE) << 12);
-    }
-
-    PDE = PT->entries[P_i];
 
     set_address(&PDE, (uint64_t) phys >> 12);
     set_flag(&PDE, PRESENT, true);
     set_flag(&PDE, READ_WRITE, true);
-    PT->entries[P_i] = PDE;
+    table->entries[indices[3]] = PDE;
 }
 
 void set_flag(pde_t* pde, int flag, bool enabled) {

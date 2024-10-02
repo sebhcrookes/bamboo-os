@@ -6,17 +6,20 @@
 
 namespace acpi {
 
+    mcfg_hdr_t* mcfg = nullptr;
+
     Vector entries;
     
     void parse_mcfg() {
-        sdt_hdr_t* mcfg_hdr = get_table("MCFG");
-        faults::assert(is_valid_sdt_checksum(mcfg_hdr), "Invalid MCFG checksum");
+        mcfg = (mcfg_hdr_t*) get_table("MCFG");
 
-        entries = Vector();
+        faults::assert(is_valid_sdt_checksum(&mcfg->header), "Invalid MCFG checksum");
 
-        uint64_t num_entries = (mcfg_hdr->length - sizeof(sdt_hdr_t)) / sizeof(config_space_base_addr_t);
-
-        io::printf("%u\n", num_entries);
+        io::print_drv_name("MCFG");
+        io::printf("Parsed MCFG\n");
     }
 
+    mcfg_hdr_t* get_mcfg() {
+        return mcfg;
+    }
 }

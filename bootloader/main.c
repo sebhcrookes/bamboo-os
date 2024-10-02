@@ -7,6 +7,8 @@
 #include "structs.h"
 #include "vmm.h"
 
+#include "efi-helpers.h"
+
 #define KERNEL_START 0xFFFF800000000000
 
 void abort_boot(char* reason) {
@@ -26,9 +28,7 @@ bamboo_mmap_t* get_memory_map() {
 	uint64_t descriptor_size;
 	uint32_t descriptor_version;
 
-	//
-	// Get the EFI memory map.
-	//
+	// Get the EFI memory map
 	memory_map_size  = 0;
 	memory_map      = NULL;
 	efi_status_t status = BS->GetMemoryMap (
@@ -40,9 +40,7 @@ bamboo_mmap_t* get_memory_map() {
 					);
 	memory_map_size += 2 * descriptor_size;
 	
-	//
-	// Use size returned for the AllocatePool.
-	//
+	// Use size returned for the AllocatePool
 	memory_map = (efi_memory_descriptor_t*) malloc(memory_map_size);
 	if(memory_map == NULL) {
 		abort_boot("Could not allocate memory for the memory map");
@@ -54,10 +52,12 @@ bamboo_mmap_t* get_memory_map() {
 					&descriptor_size,
 					&descriptor_version
 					);
+
 	if (EFI_ERROR(status)) {
 		free(memory_map);
 	}
 	
+	// Copy EFI memory map info into bamboo memory map
 	mmap->map = memory_map;
 	mmap->map_size = memory_map_size;
 	mmap->key = map_key;
@@ -71,6 +71,7 @@ psf2_font_t* load_psf2_font(char* path) {
 	psf2_header_t* header = (psf2_header_t*) malloc(sizeof(psf2_header_t));
 	uint8_t* glyphs;
 
+	// Open the PSF2 file
 	FILE* font = fopen(path, "r");
 	if (font == NULL) {
 		printf("[PSF2]: Failed to load font %s\n", path);
@@ -79,33 +80,24 @@ psf2_font_t* load_psf2_font(char* path) {
 
 	size_t hdr_size = sizeof(psf2_header_t);
 
+	// Read in the header and make sure the magic value is correct
 	fread(header, hdr_size, 1, font);
 	if (header->magic != PSF2_FONT_MAGIC) {
 		printf("[PSF2]: Magic not PSF2 for font %s\n", path);
 		return NULL;
 	}
 
+	// Allocate space for and read in the glyphs
 	glyphs = (uint8_t*) malloc(header->numglyph * header->bytesperglyph);
-
 	fread(glyphs, header->bytesperglyph * header->numglyph, 1, font);
 
+	// Assemble the final, finished struct
 	psf2_font_t* finished = (psf2_font_t*) malloc(sizeof(psf2_font_t));
 
 	finished->psf2_header = header;
 	finished->glyphs = glyphs;
 
 	return finished;
-}
-
-bool guid_equal(efi_guid_t f, efi_guid_t s) {
-	if(f.Data1 == s.Data1
-	&& f.Data2 == s.Data2
-	&& f.Data3 == s.Data3
-	&& *(uint64_t*) &f.Data4[0] == *(uint64_t*) &s.Data4[0]) {
-		return true;
-	}
-
-	return false;
 }
 
 void* get_rsdp() {
@@ -153,6 +145,8 @@ int main(int argc, char **argv) {
 
 			printf("========= BambooOS - First use boot options =========\n");
 			printf("(these can be changed later in the operating system)\n\n");
+
+			printf("Use up and down arrows to select, and right to proceed\n\n");
 
 			switch(key.ScanCode) {
 				case SCAN_UP: {
@@ -238,7 +232,9 @@ int main(int argc, char **argv) {
 	printf("| |_) |   __ _   _ __ ___   | |__     ___     ___   | |  | | | (___  \n");
 	printf("|  _ <   / _` | | '_ ` _ \\  | '_ \\   / _ \\   / _ \\  | |  | |  \\___ \\ \n");
 	printf("| |_) | | (_| | | | | | | | | |_) | | (_) | | (_) | | |__| |  ____) |\n");
-	printf("|____/   \\__,_| |_| |_| |_| |_.__/   \\___/   \\___/   \\____/  |_____/ \n\n");
+	printf("|____/   \\__,_| |_| |_| |_| |_.__/   \\___/   \\___/   \\____/  |_____/");
+
+	printf("  Bootloader\n\n");
 	
 	/* ========= Calculating Memory Size ========= */
 

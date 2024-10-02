@@ -4,6 +4,7 @@
 
 #include <stdlib.h>
 
+// These values can be found easily online
 const guid_t ESP_GUID = {0xC12A7328, 0xF81F, 0x11D2, 0xBA, 0x4B, {0x00, 0xA0, 0xC9, 0x3E, 0xC9, 0x3B} };
 const guid_t DATA_GUID = {0xEBD0A0A2, 0xB9E5, 0x4433, 0x87, 0xC0, {0x68, 0xB6, 0xB7, 0x26, 0x99, 0xC7} };
 
@@ -14,9 +15,9 @@ uint32_t crc32(uint8_t* structure, uint32_t length) {
    i = 0;
    crc = 0xFFFFFFFF;
    while (i < length) {
-      byte = structure[i];            // Get next byte.
+      byte = structure[i];
       crc = crc ^ byte;
-      for (j = 7; j >= 0; j--) {    // Do eight times.
+      for (j = 7; j >= 0; j--) {
          mask = -(crc & 1);
          crc = (crc >> 1) ^ (0xEDB88320 & mask);
       }

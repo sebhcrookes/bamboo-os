@@ -23,6 +23,9 @@ namespace io {
     void io_wait();
 
     void io_write_8(uint32_t port, uint8_t data);
+    void io_write_32(uint32_t port, uint32_t data);
+
+    uint32_t io_read_32(uint32_t port);
 
     void mmio_write_32(void *p, uint32_t data);
     uint32_t mmio_read_32(void *p);

@@ -4,6 +4,11 @@
 
 namespace acpi {
 
+    struct mcfg_hdr_t {
+        sdt_hdr_t header;
+        uint8_t reserved[8];
+    } __attribute__((packed));
+
     struct config_space_base_addr_t {
         uint64_t base_address;
         uint16_t pci_segment_group_num;
@@ -14,4 +19,5 @@ namespace acpi {
 
     void parse_mcfg();
 
+    mcfg_hdr_t* get_mcfg();
 }

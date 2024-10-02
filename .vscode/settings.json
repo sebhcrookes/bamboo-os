@@ -23,7 +23,8 @@
         "deque": "cpp",
         "unordered_map": "cpp",
         "vector": "cpp",
-        "initializer_list": "cpp"
+        "initializer_list": "cpp",
+        "cstdlib": "cpp"
     },
     "C_Cpp.errorSquiggles": "enabled"
 }

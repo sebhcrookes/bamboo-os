@@ -10,7 +10,10 @@
 #include "mem/allocator.h"
 #include "mem/vmm.h"
 #include "acpi/acpi.h"
+#include "fs/vfs.h"
 #include "cpu/smp.h"
+#include "pci/pci.h"
+#include "pci/pci_drivers.h"
 
 namespace kernel {
 
@@ -41,11 +44,14 @@ namespace kernel {
 
         acpi::init(boot_info->rsdp);
 
+        pci::init();
+        pci::initialise_pci_drivers();
+
+        vfs::init();
+
         interrupts::init();
 
         smp::init();
-
-        // pci::init();
     
         io::print_drv_name("Kernel");
         io::printf("Kernel initialised\n\n");

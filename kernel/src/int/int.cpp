@@ -25,6 +25,7 @@ namespace interrupts {
         idt::idt_set_descriptor(0x06, (void*) isr::invalid_opcode_handler, 0x8E);
         idt::load_idtr();
 
+        // Disable the PIC (to use the IO APIC)
         pic::disable();
         local_apic::init();
         ioapic::init();
@@ -33,7 +34,7 @@ namespace interrupts {
         /* Enable IO APIC entries */
         ioapic::set_entry(ioapic::get_addr(), acpi::madt_remap_irq(IRQ_TIMER), INT_TIMER);
 
-        enable();
+        enable(); // Enable interrupts
 
         io::print_drv_name("Interrupts");
         io::printf("Initialised and enabled interrupt handling\n");
