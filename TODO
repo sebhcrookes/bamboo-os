@@ -1,0 +1,2 @@
+- Create a memory layout diagram for the whole operating system - which pages are used for what (do it by pages and then by UPN)
+- Write a proper spinlock implementation
